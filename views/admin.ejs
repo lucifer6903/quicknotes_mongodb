@@ -1,45 +1,45 @@
+<!-- views/admin.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notes</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Notes</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Notes</h1>
-    <table id="notesTable">
-        <thead>
-            <tr>
-                <th>id</th>
-                <th>notes</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Table rows will be inserted here by JavaScript -->
-        </tbody>
+  <div class="container">
+    <h1 class="mt-5">Notes</h1>
+    <table class="table table-bordered mt-3">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Note</th>
+          <th>delete</th>
+          <th>rename</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% notes.forEach(note => { %>
+          <tr>
+            <td><%= note.id %></td>
+            <td><%= note.note %></td>   %>
+            <td> <form action="/note/<%= note._id %>" method="POST" style="display:inline;">
+              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>  
+            </td><td>
+            <form action="/note/re/<%= note._id %>" method="POST" style="display:inline;">
+              <input type="text" name="rename_note"  placeholder="New Note" required>
+              <button type="submit" class="btn btn-primary btn-sm">Rename</button>
+            </form></td>
+          </tr>
+        <% }) %>
+      </tbody>
     </table>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            fetch('admin')
-                .then(response => response.json())
-                .then(data => {
-                    const tableBody = document.querySelector('#notesTable tbody');
-                    data.forEach(note => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${note.id}</td>
-                            <td>${note.notes}</td>
-                            <td>${new Date(note.date).toLocaleDateString()}</td>
-                        `;
-                        tableBody.appendChild(row);
-                    });
-                })
-                .catch(error => console.error('Error fetching notes:', error));
-        });
-        
+  </div>
+  <script>
+    
 
-    </script>
+  </script>
 </body>
 </html>

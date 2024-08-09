@@ -3,6 +3,10 @@ const path = require("path");
 const collection = require("./config");
 const bcrypt = require('bcrypt');
 const collection2 =require("./config2");
+const methodOverride = require('method-override');
+const bodyParser = require('body-parser');
+
+
 
 const app = express();
 // convert data into json format
@@ -70,26 +74,80 @@ app.post("/login", async (req, res) => {
     }
 });
 app.post("/home",async(req,res)=>{
-    res.send("you have created !!");
+
+    res.send("you have created !!" );
     const data1 = {
         note: req.body.text,
         createdAT:new Date()
     }
     const notes = await collection2.insertMany(data1);
     return console.log(notes);
-})
-// const itemSchema = new mongoose.Schema({
-//     note:string
-// });
+    
 
+});
 app.post("/admin",async(req,res)=>{
-    try{
+    try {
         const notes = await collection2.find({});
-        res.json(notes);
+        res.render('admin', { notes });
+      } catch (error) {
+        console.error('Error fetching notes:', error);
+        res.status(500).send('Internal Server Error');
+      }
 
-    }catch(error){
-        res.status(500).send(error);
+});
+
+app.post('/note/:id', async (req, res) => {
+    try {
+        const noteId = req.params.id; 
+        console.log(noteId.toString(), "deleted sucessfully"); 
+        await collection2.findByIdAndDelete(noteId); // Use noteId, not note
+        res.redirect('/admin');
+    } catch (error) {
+        console.error('Error deleting note:', error);
+        res.status(500).send('Internal Server Error for delete');
     }
+});
+app.post('/note/re/:id', async (req, res) => {
+    try {
+        const noteId = req.params.id; // Correct parameter access
+        const newNote = req.body.rename_note;
+        
+        await collection2.findByIdAndUpdate(noteId, { note: newNote });
+        
+        res.redirect('/admin');
+    } catch (error) {
+        console.error('Error updating note:', error); // Correct error message
+        res.status(500).send('Internal Server Error while updating the note');
+    }
+});
+// app.get('/note/re/:id', async (req, res) => {
+//     try {
+//         const noteId = req.params.id;
+//         const newNote = req.body.note;
+//         await Note.findByIdAndUpdate(noteId, { note: newNote });
+//         res.redirect('/admin');
+    
+//     } catch (error) {
+//         console.error('Error deleting note:', error);
+//         res.status(500).send('Internal Server Error for update');
+//     }
+// });
+  app.get("/admin",async(req,res)=>{
+    try {
+        const notes = await collection2.find({});
+        res.render('admin', { notes });
+      } catch (error) {
+        console.error('Error fetching notes:', error);
+        res.status(500).send('Internal Server Error');
+      }
+
+
+})
+
+
+app.get("/user/admin",async(req,res)=>{
+    const ht = await collection2.find({});
+    res.json(ht);
 });
 
 

@@ -17,5 +17,6 @@ const loginschema= new mongoose.Schema({
         default: Date.now 
     }
 });
+noteSchema.plugin(AutoIncrement, { inc_field: 'id' });
 const collection = new mongoose.model("note1",loginschema);
 module.exports= collection;
