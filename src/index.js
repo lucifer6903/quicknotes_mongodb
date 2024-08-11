@@ -33,7 +33,6 @@ app.post("/signup", async (req, res) => {
         password: req.body.password
     }
 
-    // Check if the username already exists in the database
     const existingUser = await collection.findOne({ name: data.name });
 
     if (existingUser) {
@@ -46,7 +45,8 @@ app.post("/signup", async (req, res) => {
         data.password = hashedPassword; // Replace the original password with the hashed one
 
         const userdata = await collection.insertMany(data);
-        return console.log(userdata);
+        console.log(userdata);
+        res.redirect("/");
     }
 
 });
@@ -82,7 +82,17 @@ app.post("/home",async(req,res)=>{
     }
     const notes = await collection2.insertMany(data1);
     return console.log(notes);
-    
+});
+app.post("/home_admin",async(req,res)=>{
+//    res.send(`you have created !! ` );   
+    const data1 = {
+        note: req.body.text,
+        createdAT:new Date()
+    }
+    const notes = await collection2.insertMany(data1);
+    console.log(notes);
+    res.redirect('/admin');
+
 
 });
 app.post("/admin",async(req,res)=>{
@@ -120,19 +130,11 @@ app.post('/note/re/:id', async (req, res) => {
         res.status(500).send('Internal Server Error while updating the note');
     }
 });
-// app.get('/note/re/:id', async (req, res) => {
-//     try {
-//         const noteId = req.params.id;
-//         const newNote = req.body.note;
-//         await Note.findByIdAndUpdate(noteId, { note: newNote });
-//         res.redirect('/admin');
-    
-//     } catch (error) {
-//         console.error('Error deleting note:', error);
-//         res.status(500).send('Internal Server Error for update');
-//     }
-// });
-  app.get("/admin",async(req,res)=>{
+app.post('/note_create',async(req,res)=>{
+    console.log("adhkd");//hjvvv
+    res.render("admin_create")
+});
+app.get("/admin",async(req,res)=>{
     try {
         const notes = await collection2.find({});
         res.render('admin', { notes });
@@ -142,7 +144,7 @@ app.post('/note/re/:id', async (req, res) => {
       }
 
 
-})
+});
 
 
 app.get("/user/admin",async(req,res)=>{
@@ -154,21 +156,21 @@ app.get("/user/admin",async(req,res)=>{
 app.post("/main",async(req,res)=>{
     res.render("home")
 
-})
+});
 app.get("/about",async(req,res)=>{
     res.render("about")
-})
+});
 
 app.get("/services",async(req,res)=>{
     res.render("services")
-})
+});
 
 app.get("/contact",async(req,res)=>{
     res.render("contact")
-})
+});
 app.get("/logout",async(req,res)=>{
     res.render("login")
-})
+});
 // Define Port for Application
 const port = 5000;
 app.listen(port, () => {
